@@ -84,29 +84,29 @@ Only the histogram and visualized activations of the last convolutional layer (3
 ### SELU
 * The convolutional layer
 
-<img src="figure/result/selu3.png" width="450"/>
+<img src="figure/result/selu3.png" width="650"/>
 
 * The fully connected layer
 
-<img src="figure/result/selu4.png" width="450"/>
+<img src="figure/result/selu4.png" width="650"/>
 
 ### ReLU
 * The convolutional layer
 
-<img src="figure/result/relu3.png" width="450"/>
+<img src="figure/result/relu3.png" width="650"/>
 
 * The fully connected layer
 
-<img src="figure/result/relu4.png" width="450"/>
+<img src="figure/result/relu4.png" width="650"/>
 
 ### Leaky ReLU
 * The convolutional layer
 
-<img src="figure/result/relu3.png" width="450"/>
+<img src="figure/result/relu3.png" width="650"/>
 
 * The fully connected layer
 
-<img src="figure/result/relu4.png" width="450"/>
+<img src="figure/result/relu4.png" width="650"/>
 
 ## Related works
 * [Self-Normalizing Neural Networks](https://arxiv.org/pdf/1706.02515.pdf) by Klambauer et. al

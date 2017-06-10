@@ -3,7 +3,7 @@
 ## Descriptions
 This project includes a [Tensorflow](https://www.tensorflow.org/) implementation of SELUs (scaled exponential linear units) proposed in this paper [Self-Normalizing Neural Networks](https://arxiv.org/abs/1706.02515). Also, aiming to present clear at a glance comparisons among SELU, ReLU, Leaky ReLU, etc, this implementation focuses on visualizing and histograming activations on [Tensorboard](https://www.tensorflow.org/get_started/summaries_and_tensorboard). As a result, the draw nvisualization and histogram are nicely incorporate with Tensorboard by introducing plotting summaries. Examples of visualizaion and histogram are as follow.
 
-<img src="figure/AVH.png" height="300"/>, 
+<img src="figure/AVH.png" height="4500"/>, 
 
 Ideally, desire activations of every layer are close to *zero mean* and *unit variance* to make tensors propagated through several layers converge towards zero mean and unit variance. The learning can, therefore, be stabilized by preventing gradients from being vanishing and exploding. In this work, the authors propose scaled exponential linear units (SELUs) which aim to automatically shift and rescale neuron activations towards zero mean and unit variance without explicit normalization like what batch normalization technique does. 
 
@@ -11,11 +11,11 @@ Intending to empirically verify the effectiveness of the proposed activations, a
 
 * Histogram of activations on Tensorboard
 
-<img src="figure/H.png" height="150"/>, 
+<img src="figure/H.png" height="250"/>, 
 
 * Visualization of activations on Tensorboard
 
-<img src="figure/V.png" height="150"/>, 
+<img src="figure/V.png" height="250"/>, 
 
 The implemented model is trained and tested on three publicly available datasets: [MNIST](http://yann.lecun.com/exdb/mnist/), [SVHN](http://ufldl.stanford.edu/housenumbers/), and [CIFAR-10](https://www.cs.toronto.edu/~kriz/cifar.html).
 
@@ -31,14 +31,29 @@ The implemented model is trained and tested on three publicly available datasets
 
 ## Usage
 
+### Dataests
 Download datasets with:
 ```bash
 $ python download.py --dataset MNIST SVHN CIFAR10
 ```
+
+### Just run and view
 Simpy run comparisons among the default activations including SELU, ReLU, and Leaky ReLU
 ```bash
 python script.py
 ```
+Note that this script will 
+* Clean up the default directory *train_dir*, 
+* Run three training jobs with the same settings of the model architecture, learning rate, dataset but only differing from the adapted activations (ReLu, Leaky ReLu, and SELU), and 
+* Launch Tensorboard on the provided deault port (localhost:7007).
+
+### Use your own setting
+You can change several setting with the args including batch size, learning rate and its weight decay, dataset, activations, etc.
+
+Also, if you want to test other model architectures or other activations such as sigmoid or tanh, it's also easy.
+
+Her are some examples:
+
 Train models with different activation functions with downloaded datasets:
 ```bash
 $ python trainer.py --dataset MNIST --activation relu
@@ -126,4 +141,3 @@ $ python evaler.py --dataset YOUR_DATASET
 Shao-Hua Sun / [@shaohua0116](https://shaohua0116.github.io/)
 
 The code *monitor.py* was written by Jongwook Choi / [@wookayin](https://github.com/wookayin/)
-

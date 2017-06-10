@@ -70,8 +70,8 @@ def get_data_info():
 def get_conv_info():
     return np.array([64, 128, 256])
 
-def get_deconv_info():
-    return np.array([[384, 2, 1], [128, 4, 2], [64, 4, 2], [3, 6, 2]])
+def get_vis_info():
+    return np.array([[128, 128], [64, 128], [64, 64], [10, 16], [5, 8], [2, 5]])
 
 def create_default_splits(is_train=True):
     ids = all_ids()

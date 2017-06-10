@@ -58,9 +58,9 @@ class Model(object):
     def build(self, is_train=True):
 
         n = self.num_class
-        num_layer = 6
         conv_info = self.conv_info
         visualize_shape = self.visualize_shape # [# of layers, 2]
+        num_layer = visualize_shape.shape[0]
 
         # build loss and accuracy {{{
         def build_loss(logits, labels):
@@ -107,8 +107,6 @@ class Model(object):
             return fig
 
         def draw_act_hist(h, grid_shape):
-            # import ipdb; ipdb.set_trace()
-            # fig, ax = tfplot.subplots(figsize=(4, 4))
             fig = plt.figure()
             n, bins, patches = plt.hist(np.reshape(h, [grid_shape[0]*grid_shape[1]]), 50, normed=1, facecolor='blue', alpha=0.75)
             plt.xlabel('Activation values')
@@ -117,8 +115,7 @@ class Model(object):
             plt.show() 
             return fig
 
-        for l in range(num_layer-4):
-            i = l+3
+        for i in range(num_layer):
             shape = tf.tile(tf.expand_dims(visualize_shape[i, :], 0), [self.batch_size, 1])
             tfplot.summary.plot_many('visualization/h'+str(i), 
                                      draw_act_vis, [h_all[i], shape], 

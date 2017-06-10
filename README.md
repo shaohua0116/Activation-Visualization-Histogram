@@ -15,7 +15,7 @@ Intending to empirically verify the effectiveness of the proposed activations, a
 
 * Visualization of activations on Tensorboard
 
-<img src="figure/V.png" widtht="300"/>, 
+<img src="figure/V.png" width="300"/>, 
 
 
 

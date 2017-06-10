@@ -46,7 +46,7 @@ python script.py
 ```
 Note that this script will 
 * Clean up the default directory *train_dir*, 
-* Run three training jobs with the same settings of the model architecture, learning rate, dataset but differing from the employed activations (ReLu, Leaky ReLu, and SELU, respectively), and 
+* Run three training jobs with the same settings of the model architecture, learning rate, dataset but differing from the employed activations (ReLU, Leaky ReLU, and SELU, respectively), and 
 * Launch Tensorboard on the provided default port (localhost:7007).
 
 ### Use your own settings
@@ -90,7 +90,7 @@ Only the histogram and visualized activations of the last convolutional layer (3
 
 <img src="figure/result/selu4.png" width="450"/>
 
-### ReLu
+### ReLU
 * The convolutional layer
 
 <img src="figure/result/relu3.png" width="450"/>

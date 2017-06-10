@@ -1,13 +1,13 @@
 # SELUs (scaled exponential linear units) - Visualized and Histogramed Comparisons among ReLU and Leaky ReLU
 
 ## Descriptions
-This project includes a [Tensorflow](https://www.tensorflow.org/) implementation of SELUs (scaled exponential linear units) proposed in this paper [Self-Normalizing Neural Networks](https://arxiv.org/abs/1706.02515). Also, aiming to present clear at a glance comparisons among SELU, ReLU, Leaky ReLU, etc, this implementation focuses on visualizing and histograming activations on [Tensorboard](https://www.tensorflow.org/get_started/summaries_and_tensorboard). As a result, the draw nvisualization and histogram are nicely incorporate with Tensorboard by introducing plotting summaries. Examples of visualizaion and histogram are as follow.
+This project includes a [Tensorflow](https://www.tensorflow.org/) implementation of SELUs (scaled exponential linear units) proposed in this paper [Self-Normalizing Neural Networks](https://arxiv.org/abs/1706.02515). Also, aiming to present clear at a glance comparisons among SELU, ReLU, Leaky ReLU, etc, this implementation focuses on visualizing and histogramming activations on [Tensorboard](https://www.tensorflow.org/get_started/summaries_and_tensorboard). As a result, the drawn visualization and histogram are nicely incorporate with Tensorboard by introducing plotting summaries. Examples of visualization and histogram are as follow.
 
 <img src="figure/AVH.png" height="450"/>, 
 
 Ideally, desire activations of every layer are close to *zero mean* and *unit variance* to make tensors propagated through several layers converge towards zero mean and unit variance. The learning can, therefore, be stabilized by preventing gradients from being vanishing and exploding. In this work, the authors propose scaled exponential linear units (SELUs) which aim to automatically shift and rescale neuron activations towards zero mean and unit variance without explicit normalization like what batch normalization technique does. 
 
-Intending to empirically verify the effectiveness of the proposed activations, a convolutional neural network consisting of three convolutional layers followed by three fully conneted layers was implemented to be trained on image classification tasks on datasets such as MNIST, SVHN, and CIFAR10. To overcome the limited content allowed to be shown on Tensorboard, a ploting library [Tensorflow Plot](https://github.com/wookayin/tensorflow-plot) developed by aiming to bridge the gap between Python plotting library and Tensorboard is introduced. Again, here are some examples.
+Intending to empirically verify the effectiveness of the proposed activations, a convolutional neural network consisting of three convolutional layers followed by three fully connected layers was implemented to be trained on image classification tasks on datasets such as MNIST, SVHN, and CIFAR10. To overcome the limited content allowed to be shown on Tensorboard, a plotting library [Tensorflow Plot](https://github.com/wookayin/tensorflow-plot) aiming to bridge the gap between Python plotting libraries and Tensorboard is introduced. Again, here are some examples.
 
 * Histogram of activations on Tensorboard
 
@@ -33,14 +33,14 @@ The implemented model is trained and tested on three publicly available datasets
 
 ## Usage
 
-### Dataests
+### Datasets
 Download datasets with:
 ```bash
 $ python download.py --dataset MNIST SVHN CIFAR10
 ```
 
 ### Just do it
-Simpy run comparisons among the default activations including SELU, ReLU, and Leaky ReLU
+Simply run comparisons among the default activations including SELU, ReLU, and Leaky ReLU
 ```bash
 python script.py
 ```
@@ -50,17 +50,15 @@ Note that this script will
 * Launch Tensorboard on the provided default port (localhost:7007).
 
 ### Use your own settings
-You can change several setting with the args including batch size, learning rate and its weight decay, dataset, activations, etc.
-
-Also, if you want to test other model architectures or other activations such as sigmoid or tanh, it's also easy.
+You can change several setting with the args including batch size, learning rate and the weight decay applied to it, dataset, activations, etc. Also, if you want to test other model architectures or other activations such as sigmoid or tanh, it's also easy.
 
 Here are some examples:
 
 Train models with different activation functions with downloaded datasets:
 ```bash
-$ python trainer.py --dataset MNIST --activation relu
-$ python trainer.py --dataset SVHN --activation lrelu
-$ python trainer.py --dataset CIFAR10 --activation selu
+$ python trainer.py --dataset MNIST --activation relu --learning_rate 1e-3
+$ python trainer.py --dataset SVHN --activation lrelu --batch_size 128
+$ python trainer.py --dataset CIFAR10 --activation selu --lr_weight_decay
 ```
 Train and test your own datasets:
 
@@ -81,46 +79,34 @@ $ python evaler.py --dataset YOUR_DATASET
 ```
 ## Results
 
-### MNIST
-<!--
-* Generated samples (100th epochs)
+Only the histogram and visualized activations of the last convolutional layer (3rd layer) and the first fully connected layer (4th layer) are selected to be presented here. (Trained for 10k iterations)
 
-<img src="figure/result/mnist/samples.png" height="250"/>
+### SELU
+* The convolutional layer
 
-* First 40 epochs
-  <img src="figure/result/mnist/training.gif" height="250"/>
-  -->
-### SVHN
+<img src="figure/result/selu3.png" width="450"/>
 
-<!--
-* Generated samples (100th epochs)
+* The fully connected layer
 
-<img src="figure/result/svhn/samples.png" height="250"/>
+<img src="figure/result/selu4.png" width="450"/>
 
-* First 160 epochs
+### ReLu
+* The convolutional layer
 
-<img src="figure/result/svhn/training.gif" height="250"/>
--->
+<img src="figure/result/relu3.png" width="450"/>
 
-### CIFAR-10
+* The fully connected layer
 
-<!--
-* Generated samples (1000th epochs)
+<img src="figure/result/relu4.png" width="450"/>
 
-<img src="figure/result/cifar10/samples.png" height="250"/>
+### Leaky ReLU
+* The convolutional layer
 
-* First 200 epochs
+<img src="figure/result/relu3.png" width="450"/>
 
-<img src="figure/result/cifar10/training.gif" height="250"/>
--->
+* The fully connected layer
 
-## Training details
-
-### MNIST
-
-### SVHN
-
-### CIFAR-10
+<img src="figure/result/relu4.png" width="450"/>
 
 ## Related works
 * [Self-Normalizing Neural Networks](https://arxiv.org/pdf/1706.02515.pdf) by Klambauer et. al
@@ -131,4 +117,4 @@ $ python evaler.py --dataset YOUR_DATASET
 
 Shao-Hua Sun / [@shaohua0116](https://shaohua0116.github.io/)
 
-The code *monitor.py* was written by Jongwook Choi / [@wookayin](https://github.com/wookayin/)
+The code *monitor.py* and *plots.py* were written by [@wookayin](https://github.com/wookayin/)

@@ -107,12 +107,24 @@ class Model(object):
             return fig
 
         def draw_act_hist(h, grid_shape):
+            fig, ax = tfplot.subplots(figsize=(4,4))
+            h = np.reshape(h, [grid_shape[0]*grid_shape[1]])
+            # n, bins, patches = ax.hist(h, 50, normed=1, facecolor='blue', alpha=0.75)
+            hist, bins = np.histogram(h)
+            ax.bar(bins[:-1], hist.astype(np.float32) / hist.sum(), width=(bins[1]-bins[0]), color='blue')
+            ax.plot(x='Activation values', y='Probability')
+            # fig.xlabel('Activation values')
+            # fig.ylabel('Probability')
+            # fig.grid(True)
+            # ax.show() 
+            """
             fig = plt.figure()
             n, bins, patches = plt.hist(np.reshape(h, [grid_shape[0]*grid_shape[1]]), 50, normed=1, facecolor='blue', alpha=0.75)
             plt.xlabel('Activation values')
             plt.ylabel('Probability')
             plt.grid(True)
             plt.show() 
+            """
             return fig
 
         for i in range(num_layer):

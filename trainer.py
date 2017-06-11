@@ -96,8 +96,8 @@ class Trainer(object):
 
         session_config = tf.ConfigProto(
             allow_soft_placement=True,
-            intra_op_parallelism_threads=1,
-            inter_op_parallelism_threads=1,
+            # intra_op_parallelism_threads=1,
+            # inter_op_parallelism_threads=1,
             gpu_options=tf.GPUOptions(allow_growth=True),
             device_count={'GPU': 1},
         )

@@ -15,7 +15,7 @@ from pprint import pprint
 from model import Model
 import tensorflow.contrib.slim as slim
 from input_ops import create_input_ops
-from plots import *
+# from plots import *
 import tfplot
 
 import os

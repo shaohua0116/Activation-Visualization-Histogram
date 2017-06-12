@@ -181,9 +181,12 @@ if __name__ == '__main__':
     path = './datasets'
     if not os.path.exists(path): os.mkdir(path)
 
-    if 'MNIST' in args.datasets:
-        download_mnist('./datasets')
-    if 'SVHN' in args.datasets:
-        download_svhn('./datasets')
-    if 'CIFAR10' in args.datasets:
-        download_cifar10('./datasets')
+    try:
+        if 'MNIST' in args.datasets:
+            download_mnist('./datasets')
+        if 'SVHN' in args.datasets:
+            download_svhn('./datasets')
+        if 'CIFAR10' in args.datasets:
+            download_cifar10('./datasets')
+    except:            
+        raise ValueError('Please at least specify one dataset to be downloaded.')

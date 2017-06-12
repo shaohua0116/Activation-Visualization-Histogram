@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import subprocess
 import argparse
 import os.path

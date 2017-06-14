@@ -60,7 +60,7 @@ def create_input_ops(dataset,
             Tout=[tf.string, tf.float32, tf.float32],
             name='func_hp'
         )
-        
+
         input_ops['id'].set_shape([])
         input_ops['image'].set_shape(list(m.shape))
         input_ops['label'].set_shape(list(label.shape))

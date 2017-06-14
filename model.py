@@ -2,18 +2,15 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-
 import tensorflow as tf
-import tensorflow.contrib.rnn as rnn
-import tensorflow.contrib.layers as layers
 import tensorflow.contrib.slim as slim
-
 import tfplot
-import matplotlib.mlab as mlab
-import matplotlib.pyplot as plt
 
-from ops import *
+from ops import conv2d, fc, selu, lrelu
 from util import log
+
+import numpy as np
+
 
 class Model(object):
 
@@ -30,7 +27,10 @@ class Model(object):
         self.c_dim = self.config.data_info[3]
         self.visualize_shape = self.config.visualize_shape
         self.conv_info = self.config.conv_info
-        self.activation = self.config.activation
+        self.activation_fn = {'selu': selu,
+                             'relu': tf.nn.relu,
+                             'lrelu': lrelu,
+                             }[self.config.activation]
 
         # create placeholders for the input
         self.image = tf.placeholder(
@@ -64,7 +64,7 @@ class Model(object):
 
         # build loss and accuracy {{{
         def build_loss(logits, labels):
-            # Cross-entropy loss            
+            # Cross-entropy loss
             loss = tf.nn.softmax_cross_entropy_with_logits(logits=logits, labels=labels)
 
             # Classification accuracy
@@ -74,28 +74,28 @@ class Model(object):
         # }}}
 
         # Classifier: takes images as input and tries to output class label [B, n]
-        def C(img, activation, scope='Classifier'):
+        def C(img, activation_fn, scope='Classifier'):
             with tf.variable_scope(scope) as scope:
-                print ('\033[93m'+scope.name+'\033[0m')
-                c_1 = conv2d(img, conv_info[0], is_train, activation, name='c_1_conv')
+                log.warn(scope.name)
+                c_1 = conv2d(img, conv_info[0], is_train, activation_fn, name='c_1_conv')
                 c_1 = slim.dropout(c_1, keep_prob=0.5, is_training=is_train, scope='c_1_conv/')
-                print (scope.name, c_1)
-                c_2 = conv2d(c_1, conv_info[1], is_train, activation, name='c_2_conv')
+                log.info('{} {}'.format(scope.name, c_1))
+                c_2 = conv2d(c_1, conv_info[1], is_train, activation_fn, name='c_2_conv')
                 c_2 = slim.dropout(c_2, keep_prob=0.5, is_training=is_train, scope='c_2_conv/')
-                print (scope.name, c_2)
-                c_3 = conv2d(c_2, conv_info[2], is_train, activation, name='c_3_conv')
+                log.info('{} {}'.format(scope.name, c_2))
+                c_3 = conv2d(c_2, conv_info[2], is_train, activation_fn, name='c_3_conv')
                 c_3 = slim.dropout(c_3, keep_prob=0.5, is_training=is_train, scope='c_3_conv/')
-                print (scope.name, c_3)
-                c_4 = fc(tf.reshape(c_3, [self.batch_size, -1]), 16*n, is_train, activation, name='c_4_fc')
-                print (scope.name, c_4)
-                c_5 = fc(tf.reshape(c_4, [self.batch_size, -1]), 4*n, is_train, activation, name='c_5_fc')
-                print (scope.name, c_5)
-                c_6 = fc(c_5, n, is_train, activation, name='c_6_fc')
-                print (scope.name, c_6)
+                log.info('{} {}'.format(scope.name, c_3))
+                c_4 = fc(tf.reshape(c_3, [self.batch_size, -1]), 16*n, is_train, activation_fn, name='c_4_fc')
+                log.info('{} {}'.format(scope.name, c_4))
+                c_5 = fc(tf.reshape(c_4, [self.batch_size, -1]), 4*n, is_train, activation_fn, name='c_5_fc')
+                log.info('{} {}'.format(scope.name, c_5))
+                c_6 = fc(c_5, n, is_train, activation_fn, name='c_6_fc')
+                log.info('{} {}'.format(scope.name, c_6))
                 assert c_6.get_shape().as_list() == [self.batch_size, n], c_6.get_shape().as_list()
                 return c_1, c_2, c_3, c_4, c_5, c_6
 
-        h_1, h_2, h_3, h_4, h_5, h_6 = C(self.image, self.activation, scope='Classifier')
+        h_1, h_2, h_3, h_4, h_5, h_6 = C(self.image, self.activation_fn, scope='Classifier')
         h_all = [h_1, h_2, h_3, h_4, h_5, h_6]
         self.loss, self.accuracy = build_loss(h_6, self.label)
 
@@ -109,35 +109,23 @@ class Model(object):
         def draw_act_hist(h, grid_shape):
             fig, ax = tfplot.subplots(figsize=(4,4))
             h = np.reshape(h, [grid_shape[0]*grid_shape[1]])
-            # n, bins, patches = ax.hist(h, 50, normed=1, facecolor='blue', alpha=0.75)
             hist, bins = np.histogram(h)
-            ax.bar(bins[:-1], hist.astype(np.float32) / hist.sum(), width=(bins[1]-bins[0]), color='blue')
+            ax.bar(bins[:-1], hist.astype(np.float32) / hist.sum(),
+                   width=(bins[1]-bins[0]), color='blue')
             ax.plot(x='Activation values', y='Probability')
-            # fig.xlabel('Activation values')
-            # fig.ylabel('Probability')
-            # fig.grid(True)
-            # ax.show() 
-            """
-            fig = plt.figure()
-            n, bins, patches = plt.hist(np.reshape(h, [grid_shape[0]*grid_shape[1]]), 50, normed=1, facecolor='blue', alpha=0.75)
-            plt.xlabel('Activation values')
-            plt.ylabel('Probability')
-            plt.grid(True)
-            plt.show() 
-            """
             return fig
 
         for i in range(num_layer):
             shape = tf.tile(tf.expand_dims(visualize_shape[i, :], 0), [self.batch_size, 1])
-            tfplot.summary.plot_many('visualization/h'+str(i), 
-                                     draw_act_vis, [h_all[i], shape], 
-                                     max_outputs=1, 
+            tfplot.summary.plot_many('visualization/h'+str(i),
+                                     draw_act_vis, [h_all[i], shape],
+                                     max_outputs=1,
                                      collections=["plot_summaries"])
-            tfplot.summary.plot_many('histogram/h'+str(i), 
-                                     draw_act_hist, [h_all[i], shape], 
-                                     max_outputs=1, 
+            tfplot.summary.plot_many('histogram/h'+str(i),
+                                     draw_act_hist, [h_all[i], shape],
+                                     max_outputs=1,
                                      collections=["plot_summaries"])
 
         tf.summary.scalar("loss/accuracy", self.accuracy)
         tf.summary.scalar("loss/cross_entropy", self.loss)
-        print ('\033[93mSuccessfully loaded the model.\033[0m')
+        log.warn('Successfully loaded the model.')

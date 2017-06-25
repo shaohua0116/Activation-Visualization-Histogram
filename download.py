@@ -49,8 +49,8 @@ def prepare_h5py(train_image, train_label, test_image,
 
 def check_file(data_dir):
     if os.path.exists(data_dir):
-        if os.path.isfile(os.path.join('data.hy')) and\
-               os.path.isfile(os.path.join('id.txt')):
+        if os.path.isfile(os.path.join(data_dir, 'data.hy')) and\
+               os.path.isfile(os.path.join(data_dir, 'id.txt')):
             return True
     else:
         os.mkdir(data_dir)

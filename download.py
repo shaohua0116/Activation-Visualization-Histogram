@@ -6,7 +6,7 @@ import argparse
 import h5py
 import numpy as np
 
-parser = argparse.ArgumentParser(description='Download dataset for SSGAN.')
+parser = argparse.ArgumentParser(description='Download datasets for SSGAN.')
 parser.add_argument('--datasets', metavar='N', type=str, nargs='+',
                     choices=['MNIST', 'SVHN', 'CIFAR10'])
 
@@ -189,12 +189,12 @@ if __name__ == '__main__':
     if not os.path.exists(path):
         os.mkdir(path)
 
-    try:
-        if 'MNIST' in args.datasets:
-            download_mnist('./datasets')
-        if 'SVHN' in args.datasets:
-            download_svhn('./datasets')
-        if 'CIFAR10' in args.datasets:
-            download_cifar10('./datasets')
-    except:
+    if args.datasets is None:
         raise ValueError('Please at least specify one dataset to be downloaded.')
+
+    if 'MNIST' in args.datasets:
+        download_mnist('./datasets')
+    if 'SVHN' in args.datasets:
+        download_svhn('./datasets')
+    if 'CIFAR10' in args.datasets:
+        download_cifar10('./datasets')

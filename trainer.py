@@ -2,27 +2,17 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-try:
-    import better_exceptions
-except ImportError:
-    pass
-
 from six.moves import xrange
 
 from util import log
 from pprint import pprint
 
 from model import Model
-import tensorflow.contrib.slim as slim
 from input_ops import create_input_ops
-# from plots import *
-import tfplot
 
 import os
 import time
-import numpy as np
 import tensorflow as tf
-import h5py
 
 class Trainer(object):
     def __init__(self,
@@ -132,14 +122,17 @@ class Trainer(object):
 
             if s % output_save_step == 0:
                 log.infov("Saved checkpoint at %d", s)
-                save_path = self.saver.save(self.session, os.path.join(self.train_dir, 'model'), global_step=step)
+                save_path = self.saver.save(self.session,
+                                            os.path.join(self.train_dir, 'model'),
+                                            global_step=step)
 
     def run_single_step(self, batch, step=None, is_train=True):
         _start_time = time.time()
 
         batch_chunk = self.session.run(batch)
 
-        fetch = [self.global_step, self.model.accuracy, self.summary_op, self.model.loss, self.check_op, self.optimizer]
+        fetch = [self.global_step, self.model.accuracy, self.summary_op,
+                 self.model.loss, self.check_op, self.optimizer]
 
         if step is not None and (step % 100 == 0):
             fetch += [self.plot_summary_op]

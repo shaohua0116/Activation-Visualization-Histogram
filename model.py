@@ -27,10 +27,11 @@ class Model(object):
         self.c_dim = self.config.data_info[3]
         self.visualize_shape = self.config.visualize_shape
         self.conv_info = self.config.conv_info
-        self.activation_fn = {'selu': selu,
-                             'relu': tf.nn.relu,
-                             'lrelu': lrelu,
-                             }[self.config.activation]
+        self.activation_fn = {
+            'selu': selu,
+            'relu': tf.nn.relu,
+            'lrelu': lrelu,
+        }[self.config.activation]
 
         # create placeholders for the input
         self.image = tf.placeholder(
@@ -47,8 +48,8 @@ class Model(object):
 
     def get_feed_dict(self, batch_chunk, step=None, is_training=None):
         fd = {
-            self.image: batch_chunk['image'], # [B, h, w, c]
-            self.label: batch_chunk['label'], # [B, n]
+            self.image: batch_chunk['image'],  # [B, h, w, c]
+            self.label: batch_chunk['label'],  # [B, n]
         }
         if is_training is not None:
             fd[self.is_training] = is_training
@@ -59,7 +60,7 @@ class Model(object):
 
         n = self.num_class
         conv_info = self.conv_info
-        visualize_shape = self.visualize_shape # [# of layers, 2]
+        visualize_shape = self.visualize_shape  # [# of layers, 2]
         num_layer = visualize_shape.shape[0]
 
         # build loss and accuracy {{{
@@ -68,7 +69,7 @@ class Model(object):
             loss = tf.nn.softmax_cross_entropy_with_logits(logits=logits, labels=labels)
 
             # Classification accuracy
-            correct_prediction = tf.equal(tf.argmax(logits, 1), tf.argmax(self.label,1))
+            correct_prediction = tf.equal(tf.argmax(logits, 1), tf.argmax(self.label, 1))
             accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
             return tf.reduce_mean(loss), accuracy
         # }}}
@@ -93,11 +94,10 @@ class Model(object):
                 c_6 = fc(c_5, n, is_train, activation_fn, name='c_6_fc')
                 log.info('{} {}'.format(scope.name, c_6))
                 assert c_6.get_shape().as_list() == [self.batch_size, n], c_6.get_shape().as_list()
-                return c_1, c_2, c_3, c_4, c_5, c_6
+                return [c_1, c_2, c_3, c_4, c_5, c_6]
 
-        h_1, h_2, h_3, h_4, h_5, h_6 = C(self.image, self.activation_fn, scope='Classifier')
-        h_all = [h_1, h_2, h_3, h_4, h_5, h_6]
-        self.loss, self.accuracy = build_loss(h_6, self.label)
+        h_all = C(self.image, self.activation_fn, scope='Classifier')
+        self.loss, self.accuracy = build_loss(h_all[-1], self.label)
 
         # Add summaries
         def draw_act_vis(h, grid_shape):
@@ -107,7 +107,7 @@ class Model(object):
             return fig
 
         def draw_act_hist(h, grid_shape):
-            fig, ax = tfplot.subplots(figsize=(4,4))
+            fig, ax = tfplot.subplots(figsize=(4, 4))
             h = np.reshape(h, [grid_shape[0]*grid_shape[1]])
             hist, bins = np.histogram(h)
             ax.bar(bins[:-1], hist.astype(np.float32) / hist.sum(),

@@ -31,11 +31,12 @@ def conv2d(input, output_shape, is_train, activation_fn,
         conv = tf.nn.conv2d(input, w, strides=[1, 2, 2, 1], padding='SAME')
         biases = tf.get_variable('biases', [output_shape],
                                  initializer=tf.constant_initializer(0.0))
-        activation = activation_fn(conv + biases)
-        bn = tf.contrib.layers.batch_norm(activation, center=True, scale=True,
-                                          decay=0.9, is_training=is_train,
-                                          updates_collections=None)
-    return bn
+        _ = activation_fn(conv + biases)
+        if activation_fn is not selu:
+            _ = tf.contrib.layers.batch_norm(_, center=True, scale=True,
+                                             decay=0.9, is_training=is_train,
+                                             updates_collections=None)
+    return _
 
 
 def fc(input, output_shape, is_train, activation_fn, name="fc"):
